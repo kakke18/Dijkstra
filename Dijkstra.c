@@ -21,52 +21,22 @@ int result_node_num;            // 結果のノード数
 void init();                            // 初期化
 void read_file();                       // ファイル読み込み
 void intput(int *start, int *goal);     // 入力
-void dijkstra(int start, int goal);     // ダイクストラ
+int dijkstra(int start, int goal);     // ダイクストラ
 void output(int start, int goal);       // 出力
+void dump();                            // 全てを出力
 
 int main() {
     int start, goal;        // 作業用変数
 
+    /*
     init();                 // 初期化
     read_file();            // ファイル読み込み
     input(&start, &goal);   // 入力
     dijkstra(start, goal);  // ダイクストラ
     output(start, goal);    // 出力
-
+    */
+    dump();
     return 0;
-}
-
-int dijkstra(int start, int goal) {
-    int min, target;     // 作業用変数
-
-    cost[start] = 0;    // スタートの距離は0
-
-    while(true) {
-        /*--- 未確定の中から距離が最も小さい地点を探索 ---*/
-        min = INFINITE;     // 初期化
-        for (int i = 0; i < node_num; i++) {
-            if (!flag[i] && min > cost[i]) {
-                min = cost[i];
-                target = i;
-            }
-        }
-
-        /*--- すべての地点が確定 ---*/
-        if (target == goal) {
-            return cost[goal];;
-        }
-
-        /*--- 確定した場所から「つながっている」or「未確定」の地点に関して ---*/
-        /*--- 確定した場所を経由した場合の距離を再計算                   ---*/
-        for (int neigh = 0; neigh < node_num; neigh++) {
-            if (cost[neigh] > dist[target][neigh] + cost[target]) {
-                cost[neigh] = dist[target][neigh] + cost[target];       //更新
-                via[neigh] = target;
-            }
-        }
-
-        flag[target] = true;
-    }
 }
 
 void init() {
@@ -82,7 +52,6 @@ void init() {
         }
     }
 }
-
 
 void read_file() {
     /*** 変数 ***/
@@ -119,6 +88,39 @@ void input(int *start, int *goal) {
     scanf("%d", goal);
 }
 
+int dijkstra(int start, int goal) {
+    int min, target;     // 作業用変数
+
+    cost[start] = 0;    // スタートの距離は0
+
+    while(true) {
+        /*--- 未確定の中から距離が最も小さい地点を探索 ---*/
+        min = INFINITE;     // 初期化
+        for (int i = 0; i < node_num; i++) {
+            if (!flag[i] && min > cost[i]) {
+                min = cost[i];
+                target = i;
+            }
+        }
+
+        /*--- すべての地点が確定 ---*/
+        if (target == goal) {
+            return cost[goal];;
+        }
+
+        /*--- 確定した場所から「つながっている」or「未確定」の地点に関して ---*/
+        /*--- 確定した場所を経由した場合の距離を再計算                   ---*/
+        for (int neigh = 0; neigh < node_num; neigh++) {
+            if (cost[neigh] > dist[target][neigh] + cost[target]) {
+                cost[neigh] = dist[target][neigh] + cost[target];       //更新
+                via[neigh] = target;
+            }
+        }
+
+        flag[target] = true;
+    }
+}
+
 void output(int start, int goal) {
     int node, distance;         // 作業用変数
 
@@ -136,5 +138,22 @@ void output(int start, int goal) {
     for (int i = result_node_num - 1; i >= 0; i--) {
         printf(" -> %d", result[i]);
     }
-    printf("  dist : %d", distance);
+    printf(" dist : %d\n", distance);
+}
+
+void dump() {
+    init();
+    read_file();
+    for (int i = 0; i < node_num; i++) {
+        printf("<start:%d>\n", i);
+        for (int j = 0; j < node_num; j++) {
+            if (i !=  j) {
+                init();
+                read_file();
+                dijkstra(i, j);
+                output(i, j);
+            }
+        }
+        printf("\n");
+    }
 }
