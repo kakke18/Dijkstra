@@ -89,8 +89,23 @@ void read_file() {
 }
 
 int main() {
+    int start, goal, node;        // 作業用変数
+
     init();
     read_file();
+
+    printf("Input start and goal\n");
+    scanf("%d", &start);
+    scanf("%d", &goal);
+
+    dijkstra(start, goal);
+
+    node = goal;
+    printf("%d", node);
+    while (node != start) {
+        node = via[node];
+        printf(" -> %d", node);
+    }
 
     return 0;
 }
