@@ -18,25 +18,45 @@ int result[MAX_NODE];           // 出力結果
 int result_node_num;            // 結果のノード数
 
 /**************** 関数プロトタイプ宣言 ****************/
+void select_mode(int *mode);            // モード選択
 void init();                            // 初期化
 void read_file();                       // ファイル読み込み
-void intput(int *start, int *goal);     // 入力
-int dijkstra(int start, int goal);     // ダイクストラ
+void input(int *start, int *goal);      // 入力
+int dijkstra(int start, int goal);      // ダイクストラ
 void output(int start, int goal);       // 出力
 void dump();                            // 全てを出力
 
 int main() {
-    int start, goal;        // 作業用変数
+    int mode, start, goal;          // 作業用変数
 
-    /*
-    init();                 // 初期化
-    read_file();            // ファイル読み込み
-    input(&start, &goal);   // 入力
-    dijkstra(start, goal);  // ダイクストラ
-    output(start, goal);    // 出力
-    */
-    dump();
-    return 0;
+    while (true) {
+        select_mode(&mode);          //モード選択
+
+        if (mode == 0) {
+            init();
+            read_file();
+            input(&start, &goal);
+            dijkstra(start, goal);
+            output(start, goal);
+        }
+        else if (mode == 1) {
+            dump();
+        }
+        else {
+            return 0;
+        }
+
+        printf("\n");
+    }
+}
+
+void select_mode(int *mode) {
+    printf("<<<Dijkstra>>>\n");
+    printf("  0:select start and goal\n");
+    printf("  1:all display\n");
+    printf("  2:exit\n");
+    printf("select mode(0-2) > ");
+    scanf("%d", mode);
 }
 
 void init() {
@@ -82,9 +102,9 @@ void read_file() {
 
 void input(int *start, int *goal) {
     printf("<Input start and goal>\n");
-    printf("  start > ");
+    printf("  start(0-%d) > ", node_num - 1);
     scanf("%d", start);
-    printf("  goal  > ");
+    printf("  goal (0-%d) > ", node_num - 1);
     scanf("%d", goal);
 }
 
@@ -138,7 +158,7 @@ void output(int start, int goal) {
     for (int i = result_node_num - 1; i >= 0; i--) {
         printf(" -> %d", result[i]);
     }
-    printf(" dist : %d\n", distance);
+    printf(" dist:%d\n", distance);
 }
 
 void dump() {
