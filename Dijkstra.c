@@ -10,12 +10,32 @@
 /*********************** 変数 ***********************/
 int dist[MAX_NODE][MAX_NODE];   // 距離テーブル
 int cost[MAX_NODE];             // 最小コスト
-int via[MAX_NODE];              // 
+int via[MAX_NODE];              // 親ノード
 bool flag[MAX_NODE];            // 確定フラグ
 int node_num;                   // ノード数
 int path_num;                   // パス数
+int result[MAX_NODE];           // 出力結果
+int result_node_num;            // 結果のノード数
 
-/******************* ダイクストラ *******************/
+/**************** 関数プロトタイプ宣言 ****************/
+void init();                            // 初期化
+void read_file();                       // ファイル読み込み
+void intput(int *start, int *goal);     // 入力
+void dijkstra(int start, int goal);     // ダイクストラ
+void output(int start, int goal);       // 出力
+
+int main() {
+    int start, goal;        // 作業用変数
+
+    init();                 // 初期化
+    read_file();            // ファイル読み込み
+    input(&start, &goal);   // 入力
+    dijkstra(start, goal);  // ダイクストラ
+    output(start, goal);    // 出力
+
+    return 0;
+}
+
 int dijkstra(int start, int goal) {
     int min, target;     // 作業用変数
 
@@ -50,16 +70,19 @@ int dijkstra(int start, int goal) {
 }
 
 void init() {
+    result_node_num = 0;
     for (int i = 0; i < MAX_NODE; i++) {
         cost[i] = INFINITE;
         flag[i] = false;
         via[i] = -1;
+        result[i] = -1;
 
         for(int j = 0; j < MAX_NODE; j++) {
             dist[i][j] = INFINITE;
         }
     }
 }
+
 
 void read_file() {
     /*** 変数 ***/
@@ -88,24 +111,30 @@ void read_file() {
     fclose(fp); // ファイルクローズ
 }
 
-int main() {
-    int start, goal, node;        // 作業用変数
+void input(int *start, int *goal) {
+    printf("<Input start and goal>\n");
+    printf("  start > ");
+    scanf("%d", start);
+    printf("  goal  > ");
+    scanf("%d", goal);
+}
 
-    init();
-    read_file();
+void output(int start, int goal) {
+    int node, distance;         // 作業用変数
 
-    printf("Input start and goal\n");
-    scanf("%d", &start);
-    scanf("%d", &goal);
-
-    dijkstra(start, goal);
+    distance = 0;
 
     node = goal;
-    printf("%d", node);
+    result[0] = node;
     while (node != start) {
+        distance += dist[via[node]][node];
         node = via[node];
-        printf(" -> %d", node);
+        result_node_num++;
+        result[result_node_num] = node;
     }
-
-    return 0;
+    printf("%d", result[result_node_num]);
+    for (int i = result_node_num - 1; i >= 0; i--) {
+        printf(" -> %d", result[i]);
+    }
+    printf("  dist : %d", distance);
 }
