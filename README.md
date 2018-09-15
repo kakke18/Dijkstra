@@ -1,2 +1,2 @@
-# Dijkstra
+# dijkstra
 ダイクストラ法
